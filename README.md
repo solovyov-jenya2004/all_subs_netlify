@@ -6,7 +6,7 @@
 [![Last commit](https://custom-icon-badges.demolab.com/github/last-commit/solovyov-jenya2004/all_subs_netlify?logo=history&logoColor=white&color=0e75b6&style=flat-square)](https://github.com/solovyov-jenya2004/all_subs_netlify/commits/main)
 ![Visitors](https://komarev.com/ghpvc/?username=solovyov-jenya2004&repo=all_subs_netlify&label=visitors&color=0e75b6&style=flat-square)
 
-> ⚡ Набор серверных функций Netlify для доступа к подпискам [all_subs](https://github.com/solovyov-jenya2004/all_subs).  
+> ⚡ Набор серверных функций Netlify для доступа к подпискам [🚀 all_subs](https://github.com/solovyov-jenya2004/all_subs).  
 > Все эндпоинты загружают данные напрямую с GitHub при каждом запросе.
 > 
 ---
@@ -48,11 +48,11 @@ https://all-subs.netlify.app/random
 
 ## 🧠 Как это устроено
 
-Этот репозиторий содержит три серверные функции Netlify, которые работают поверх одного источника — файла `final_sorted` из основного репозитория.
+Этот репозиторий содержит три серверные функции Netlify, которые работают поверх двух источников — файлов `final_sorted` и `final_sorted_base64` из основного репозитория.
 
-- **`/api/final_sorted`** – загружает полный список конфигов и отдаёт его как обычный текст.  
-- **`/api/final_sorted_base64`** – делает то же самое, но кодирует результат в Base64.  
-- **`/api/random`** – загружает полный список, перемешивает его и возвращает случайную выборку. Количество можно задать параметром `?n=`. По умолчанию отдаётся 100 конфигов.
+- **`/netlify/functions/final_sorted`** – загружает полный список конфигов и отдаёт его как обычный текст.  
+- **`/netlify/functions/final_sorted_base64`** – делает то же самое, но кодирует результат в Base64.  
+- **`/netlify/functions/random`** – загружает полный список, перемешивает его и возвращает случайную выборку. Количество можно задать параметром `?n=`. По умолчанию отдаётся 100 конфигов.
 
 Основной генератор подписок работает в [all_subs](https://github.com/solovyov-jenya2004/all_subs) и запускается каждую минуту.  
 Там же вы можете найти полный список источников, FAQ и документацию.
@@ -92,7 +92,7 @@ https://all-subs.netlify.app/random
 > *Вся ответственность за использование конфигураций лежит на конечном пользователе.*  
 > *Проект некоммерческий и не рекламирует какие‑либо VPN‑сервисы.*  
 > *Используйте информацию и файлы исключительно в законных целях.*  
-> *Подробнее об основном проекте: [all_subs](https://github.com/solovyov-jenya2004/all_subs)*
+> *Подробнее об основном проекте: [🚀 all_subs](https://github.com/solovyov-jenya2004/all_subs)*
 
 ---
 
