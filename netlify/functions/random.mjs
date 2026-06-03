@@ -21,7 +21,7 @@ function shuffle(arr) {
   return arr;
 }
 
-export default async function handler(req, res) {
+export default async function handler(event, context) {
   try {
     const lines = await fetchConfigLines();
     const headers = [];
@@ -32,37 +32,44 @@ export default async function handler(req, res) {
     }
 
     if (proxies.length === 0) {
-      res.statusCode = 200;
-      res.setHeader('Content-Type', 'text/plain; charset=utf-8');
-      return res.end(headers.join('\n') + '\n');
+      return {
+        statusCode: 200,
+        headers: { 'Content-Type': 'text/plain; charset=utf-8' },
+        body: headers.join('\n') + '\n'
+      };
     }
 
-    let n = parseInt(req.query.n, 10);
+    const params = event.queryStringParameters || {};
+    let n = parseInt(params.n, 10);
     if (isNaN(n) || n < 1) n = 100;
     n = Math.min(n, proxies.length);
 
     const shuffled = shuffle([...proxies]);
     const selected = shuffled.slice(0, n);
-
     const responseLines = [...headers, '', ...selected];
     const body = responseLines.join('\n');
 
-    res.statusCode = 200;
-    res.setHeader('Content-Type', 'text/plain; charset=utf-8');
-    res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
-    res.setHeader('Content-Disposition', 'inline; filename="random_sub.txt"');
-    res.setHeader('profile-title', 'all_subs (random)');
-    res.setHeader('announce', 'Random subscription from the pool');
-    res.setHeader('profile-web-page-url', 'https://github.com/solovyov-jenya2004/all_subs');
-    res.setHeader('support-url', 'https://github.com/solovyov-jenya2004/all_subs/issues');
-    res.setHeader('profile-update-interval', '1');
-    res.setHeader('subscription-userinfo', 'upload=0; download=0; total=0');
-
-    return res.end(body);
+    return {
+      statusCode: 200,
+      headers: {
+        'Content-Type': 'text/plain; charset=utf-8',
+        'Cache-Control': 'no-cache, no-store, must-revalidate',
+        'Content-Disposition': 'inline; filename="random_sub.txt"',
+        'profile-title': 'all_subs (random)',
+        'announce': 'Random subscription from the pool',
+        'profile-web-page-url': 'https://github.com/solovyov-jenya2004/all_subs',
+        'support-url': 'https://github.com/solovyov-jenya2004/all_subs/issues',
+        'profile-update-interval': '1',
+        'subscription-userinfo': 'upload=0; download=0; total=0'
+      },
+      body
+    };
   } catch (err) {
     console.error(err);
-    res.statusCode = 500;
-    res.setHeader('Content-Type', 'text/plain; charset=utf-8');
-    return res.end('# Server error\n');
+    return {
+      statusCode: 500,
+      headers: { 'Content-Type': 'text/plain; charset=utf-8' },
+      body: '# Server error\n'
+    };
   }
 }
