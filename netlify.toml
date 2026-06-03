@@ -1,0 +1,18 @@
+[build]
+  functions = "netlify/functions"
+  node_bundler = "esbuild"
+
+[[redirects]]
+  from = "/final_sorted"
+  to = "/.netlify/functions/final_sorted"
+  status = 200
+
+[[redirects]]
+  from = "/final_sorted_base64"
+  to = "/.netlify/functions/final_sorted_base64"
+  status = 200
+
+[[redirects]]
+  from = "/random"
+  to = "/.netlify/functions/random"
+  status = 200
