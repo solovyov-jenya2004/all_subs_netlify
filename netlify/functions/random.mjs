@@ -1,4 +1,4 @@
-const https = require('https');
+import https from 'https';
 
 const CONFIG_URL = 'https://raw.githubusercontent.com/solovyov-jenya2004/all_subs/main/final_sorted';
 
@@ -32,8 +32,9 @@ export default async function handler(req, res) {
     }
 
     if (proxies.length === 0) {
-      res.status(200).send(headers.join('\n') + '\n');
-      return;
+      res.statusCode = 200;
+      res.setHeader('Content-Type', 'text/plain; charset=utf-8');
+      return res.end(headers.join('\n') + '\n');
     }
 
     let n = parseInt(req.query.n, 10);
@@ -46,6 +47,7 @@ export default async function handler(req, res) {
     const responseLines = [...headers, '', ...selected];
     const body = responseLines.join('\n');
 
+    res.statusCode = 200;
     res.setHeader('Content-Type', 'text/plain; charset=utf-8');
     res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
     res.setHeader('Content-Disposition', 'inline; filename="random_sub.txt"');
@@ -56,9 +58,11 @@ export default async function handler(req, res) {
     res.setHeader('profile-update-interval', '1');
     res.setHeader('subscription-userinfo', 'upload=0; download=0; total=0');
 
-    res.status(200).send(body);
+    return res.end(body);
   } catch (err) {
     console.error(err);
-    res.status(500).send('# Server error\n');
+    res.statusCode = 500;
+    res.setHeader('Content-Type', 'text/plain; charset=utf-8');
+    return res.end('# Server error\n');
   }
 }
