@@ -21,7 +21,7 @@ function shuffle(arr) {
   return arr;
 }
 
-export default async function handler(event, context) {
+export default async function handler(req) {
   try {
     const lines = await fetchConfigLines();
     const headers = [];
@@ -32,15 +32,14 @@ export default async function handler(event, context) {
     }
 
     if (proxies.length === 0) {
-      return {
-        statusCode: 200,
-        headers: { 'Content-Type': 'text/plain; charset=utf-8' },
-        body: headers.join('\n') + '\n'
-      };
+      return new Response(headers.join('\n') + '\n', {
+        status: 200,
+        headers: { 'Content-Type': 'text/plain; charset=utf-8' }
+      });
     }
 
-    const params = event.queryStringParameters || {};
-    let n = parseInt(params.n, 10);
+    const url = new URL(req.url);
+    let n = parseInt(url.searchParams.get('n'), 10);
     if (isNaN(n) || n < 1) n = 100;
     n = Math.min(n, proxies.length);
 
@@ -49,8 +48,8 @@ export default async function handler(event, context) {
     const responseLines = [...headers, '', ...selected];
     const body = responseLines.join('\n');
 
-    return {
-      statusCode: 200,
+    return new Response(body, {
+      status: 200,
       headers: {
         'Content-Type': 'text/plain; charset=utf-8',
         'Cache-Control': 'no-cache, no-store, must-revalidate',
@@ -61,15 +60,13 @@ export default async function handler(event, context) {
         'support-url': 'https://github.com/solovyov-jenya2004/all_subs/issues',
         'profile-update-interval': '1',
         'subscription-userinfo': 'upload=0; download=0; total=0'
-      },
-      body
-    };
+      }
+    });
   } catch (err) {
     console.error(err);
-    return {
-      statusCode: 500,
-      headers: { 'Content-Type': 'text/plain; charset=utf-8' },
-      body: '# Server error\n'
-    };
+    return new Response('# Server error\n', {
+      status: 500,
+      headers: { 'Content-Type': 'text/plain; charset=utf-8' }
+    });
   }
 }
