@@ -1,5 +1,6 @@
 # 🚀 all_subs — VPN-подписка для белых списков в РФ (через Netlify)
 
+[![Netlify Status](https://api.netlify.com/api/v1/badges/671f7a89-83a1-4dd7-8f55-bc9650dcd314/deploy-status)](https://app.netlify.com/projects/all-subs/deploys)
 [![Stars](https://img.shields.io/github/stars/solovyov-jenya2004/all_subs_netlify?style=flat-square&color=0e75b6)](https://github.com/solovyov-jenya2004/all_subs_netlify/stargazers)
 [![Issues](https://img.shields.io/github/issues/solovyov-jenya2004/all_subs_netlify?style=flat-square&color=0e75b6)](https://github.com/solovyov-jenya2004/all_subs_netlify/issues)
 [![Last commit](https://custom-icon-badges.demolab.com/github/last-commit/solovyov-jenya2004/all_subs_netlify?logo=history&logoColor=white&color=0e75b6&style=flat-square)](https://github.com/solovyov-jenya2004/all_subs_netlify/commits/main)
