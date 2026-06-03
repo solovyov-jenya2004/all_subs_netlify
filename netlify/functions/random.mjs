@@ -1,13 +1,16 @@
-const CONFIG_URL = 'https://raw.githubusercontent.com/solovyov-jenya2004/all_subs/main/final_sorted';
-const TIMEOUT_MS = 10000; // 10 секунд
+import https from 'https';
 
-async function fetchConfigLines(signal) {
-  const response = await fetch(CONFIG_URL, { signal });
-  if (!response.ok) {
-    throw new Error(`GitHub error: ${response.status}`);
-  }
-  const text = await response.text();
-  return text.split('\n').map(l => l.trim());
+const CONFIG_URL = 'https://raw.githubusercontent.com/solovyov-jenya2004/all_subs/main/final_sorted';
+
+async function fetchConfigLines() {
+  const data = await new Promise((resolve, reject) => {
+    https.get(CONFIG_URL, (res) => {
+      let body = '';
+      res.on('data', chunk => body += chunk);
+      res.on('end', () => resolve(body));
+    }).on('error', reject);
+  });
+  return data.split('\n').map(l => l.trim());
 }
 
 function shuffle(arr) {
@@ -19,13 +22,8 @@ function shuffle(arr) {
 }
 
 export default async function handler(req) {
-  const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), TIMEOUT_MS);
-
   try {
-    const lines = await fetchConfigLines(controller.signal);
-    clearTimeout(timeoutId);
-
+    const lines = await fetchConfigLines();
     const headers = [];
     const proxies = [];
     for (const line of lines) {
@@ -33,7 +31,6 @@ export default async function handler(req) {
       else if (line.length > 0) proxies.push(line);
     }
 
-    // Если прокси пусты — возвращаем только заголовки
     if (proxies.length === 0) {
       return new Response(headers.join('\n') + '\n', {
         status: 200,
@@ -43,11 +40,8 @@ export default async function handler(req) {
 
     const url = new URL(req.url);
     let n = parseInt(url.searchParams.get('n'), 10);
-    if (isNaN(n) || n < 1) {
-      n = 100;
-    } else if (n > proxies.length) {
-      n = proxies.length; // не пытаемся выбрать больше, чем есть
-    }
+    if (isNaN(n) || n < 1) n = 100;
+    n = Math.min(n, proxies.length);
 
     const shuffled = shuffle([...proxies]);
     const selected = shuffled.slice(0, n);
@@ -69,10 +63,8 @@ export default async function handler(req) {
       }
     });
   } catch (err) {
-    clearTimeout(timeoutId);
     console.error(err);
-    const message = err.name === 'AbortError' ? '# Timeout fetching data\n' : '# Server error\n';
-    return new Response(message, {
+    return new Response('# Server error\n', {
       status: 500,
       headers: { 'Content-Type': 'text/plain; charset=utf-8' }
     });
